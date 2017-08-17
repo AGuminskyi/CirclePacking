@@ -10,5 +10,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 //        var categ : Category(this, #f57f17, one)
+
+
+
+//        val circle1 : Circle = Circle(5.3F)
+//        val circle2 : Circle = Circle(4.2F)
+//
+//        val list : MutableList<Circle> = mutableListOf(circle1, circle2)
+//        val circlePacking : CirclePackingLayout = CirclePackingLayout(this)
+//
+//        circlePacking.circles(list)
     }
 }
