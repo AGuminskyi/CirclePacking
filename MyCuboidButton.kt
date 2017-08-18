@@ -1,17 +1,11 @@
 package com.idapgroup.artemhuminkiy.circlepacking
 
-
 import android.animation.AnimatorSet
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
@@ -19,17 +13,48 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
+import android.widget.TextView
 
 
-class NotUse : android.support.v7.widget.AppCompatTextView {
+class MyCuboidButton : android.support.v7.widget.AppCompatTextView  {
+    private var circle_color: Int = 0
+        set(value) {
+            field = circle_color
+        }
+        get() = field
 
-    //  GETTER SETTER----------------------------
-    var circle_color: Int = 0
-    var circle_hover_color: Int = 0
+    private var circle_hover_color: Int = 0
+        set(value) {
+            field = circle_hover_color
+        }
+        get() = field
+
+    private var circle_border_color: Int = 0
+        set(value) {
+            field = value
+        }
+        get() = field
+
+
+    private var circle_border_radius: Int = 0
+        set(value) {
+            field = value
+        }
+        get() = field
+
+    private var cr_icon: Int = 0
+        set(value) {
+            field = value
+        }
+        get() = field
+
+    private var mRadius: Float = 0.toFloat()
+        set(value) {
+            field = value
+        }
+        get() = field
+
     private var default_color: Int = 0
-    var circle_border_color: Int = 0
-    var circle_border_radius: Int = 0
-    var cr_icon: Int = 0
     private var fontStyle: String? = ""
     private var circlePaint: Paint? = null
     private var circleBorder: Paint? = null
@@ -43,22 +68,19 @@ class NotUse : android.support.v7.widget.AppCompatTextView {
     private val max_Width = 80
     private val max_Height = 80
     private var ripleEffect: Boolean = false
-    private var mRadius: Float = 0.toFloat()
     private var mPaint: Paint? = null
     private var mRectPaint: Paint? = null
     private var mCoord: Coord? = null
-    internal var mCenterX: Float = 0.toFloat()
-    internal var mCenterY: Float = 0.toFloat()
+    internal var mCenterX: Float = 0f
+    internal var mCenterY: Float = 0f
     private var b: Bitmap? = null
 
-
-    constructor(context: Context) : super(context) {
-        //init(null);
-    }
+    constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init(attrs)
     }
+
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init(attrs)
@@ -124,6 +146,7 @@ class NotUse : android.support.v7.widget.AppCompatTextView {
             canvas.drawCircle(half_width.toFloat(), half_height.toFloat(), radius.toFloat(), circleBorder!!) //BORDER CIRCLE
         }
         if (cr_icon != 0) {
+            //circlePaint as Paint()
             imageIcon(canvas, circlePaint!!, half_width, half_height)
             text = ""
         } else {
@@ -138,15 +161,40 @@ class NotUse : android.support.v7.widget.AppCompatTextView {
         super.onDraw(canvas)
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
+    private fun imageIcon(canvas: Canvas, circlePaint: Paint, half_width: Int, half_height: Int) {
+        val b2 = scaleBitmap(b as Bitmap)
+        canvas.drawBitmap(b2, half_width - b2.width * 0.5f, half_height - b2.height * 0.5f, null)
+    }
 
+    private fun scaleBitmap(bitmap: Bitmap): Bitmap {
+        var bm = bitmap
+        var width = bm.width
+        var height = bm.height
+        if (width > height) {
+            val ratio = width.toFloat() / max_Width
+            width = max_Width
+            height = (height / ratio).toInt()
+        } else if (height > width) {
+            val ratio = height.toFloat() / max_Height
+            height = max_Height
+            width = (width / ratio).toInt()
+        } else {
+            height = max_Height
+            width = max_Width
+        }
+
+        bm = Bitmap.createScaledBitmap(bm, width, height, true)
+        return bm
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.actionMasked == MotionEvent.ACTION_DOWN) {
             if (inCircle(event.x, event.y, circle_x.toFloat(), circle_y.toFloat(), radius.toFloat())) {
                 mCenterX = (translationX + width) / 2.0f
                 mCenterY = (translationY + height) / 2.0f
                 mCoord!!.setX(event.x)
                 mCoord!!.setY(event.y)
-                if (ripleEffect == true) {
+                if (ripleEffect) {
                     rippleAnimation()
                 }
             }
@@ -174,7 +222,6 @@ class NotUse : android.support.v7.widget.AppCompatTextView {
         }
         invalidate()
         return true
-
     }
 
     private fun inCircle(x: Float, y: Float, circleCenterX: Float, circleCenterY: Float, circleRadius: Float): Boolean {
@@ -186,43 +233,6 @@ class NotUse : android.support.v7.widget.AppCompatTextView {
         } else {
             return false
         }
-    }
-
-    fun imageIcon(canvas: Canvas, p: Paint, p1: Int, p2: Int) {
-        val b2 = scaleBitmap(b as Bitmap)
-        canvas.drawBitmap(b2, p1 - b2.width * 0.5f, p2 - b2.height * 0.5f, null)
-    }
-
-    private fun scaleBitmap(bm: Bitmap): Bitmap {
-        var bm = bm
-        var width = bm.width
-        var height = bm.height
-        if (width > height) {
-            val ratio = width.toFloat() / max_Width
-            width = max_Width
-            height = (height / ratio).toInt()
-        } else if (height > width) {
-            val ratio = height.toFloat() / max_Height
-            height = max_Height
-            width = (width / ratio).toInt()
-        } else {
-            height = max_Height
-            width = max_Width
-        }
-
-        bm = Bitmap.createScaledBitmap(bm, width, height, true)
-        return bm
-    }
-
-    fun setColorAnimation(start: Int, end: Int) {
-        val animator = ValueAnimator.ofObject(ArgbEvaluator(), start, end)
-        animator.duration = 500
-        animator.addUpdateListener { animation ->
-            default_color = animation.animatedValue as Int
-            invalidate()
-        }
-        animator.interpolator = AccelerateDecelerateInterpolator()
-        animator.start()
     }
 
     fun rippleAnimation() {
@@ -254,30 +264,36 @@ class NotUse : android.support.v7.widget.AppCompatTextView {
         animSetAlphaRadius.start()
     }
 
-    fun setRadius(radius: Float) {
-        mRadius = radius
-        //invalidate();
+    fun setColorAnimation(start: Int, end: Int) {
+        val animator = ValueAnimator.ofObject(ArgbEvaluator(), start, end)
+        animator.duration = 500
+        animator.addUpdateListener { animation ->
+            default_color = animation.animatedValue as Int
+            invalidate()
+        }
+        animator.interpolator = AccelerateDecelerateInterpolator()
+        animator.start()
     }
-    //  GETTER SETTER----------------------------
 
-    inner class Coord {
-        var x = 0f
-        var y = 0f
+    inner class Coord{
+        var x : Float = 0f
+        var y : Float = 0f
 
+        constructor(){}
 
-        constructor() {}
-
-        constructor(xValue: Float, yValue: Float) {
+        constructor(xValue : Float, yValues : Float)  {
             this.x = xValue
-            this.y = yValue
+            this.y = yValues
         }
 
-        internal fun setX(value: Float) {
+        internal fun setX(value: Float){
             this.x = value
         }
-
-        internal fun setY(value: Float) {
+        internal fun setY(value : Float){
             this.y = value
         }
+
     }
+
+
 }
