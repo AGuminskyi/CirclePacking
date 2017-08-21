@@ -1,0 +1,51 @@
+
+
+
+ public void OnFrameMove(long iterationCounter)
+        {
+            // Sort circles based on the distance to center
+            mCircles.Sort(Comparer);
+
+            float minSeparationSq = mMinSeparation * mMinSeparation;
+            for (int i = 0; i < mCircles.Count - 1; i++)
+            {
+                for (int j = i + 1; j < mCircles.Count; j++)
+                {
+                    if (i == j)
+                        continue;
+
+                    Vector2 AB = mCircles[j].mCenter - mCircles[i].mCenter;
+                    float r = mCircles[i].mRadius + mCircles[j].mRadius;
+
+                    // Length squared = (dx * dx) + (dy * dy);
+                    float d = AB.LengthSquared() - minSeparationSq;
+                    float minSepSq = Math.Min(d, minSeparationSq);
+                    d -= minSepSq;
+
+                    if (d < (r * r) - 0.01 )
+                    {
+                        AB.Normalize();
+
+                        AB *= (float)((r - Math.Sqrt(d)) * 0.5f);
+
+                        if (mCircles[j] != mDraggingCircle)
+                            mCircles[j].mCenter += AB;
+                        if (mCircles[i] != mDraggingCircle)
+                            mCircles[i].mCenter -= AB;
+                    }
+
+                }
+            }
+
+
+            float damping = 0.1f / (float)(iterationCounter);
+            for (int i = 0; i < mCircles.Count; i++)
+            {
+                if (mCircles[i] != mDraggingCircle)
+                {
+                    Vector2 v = mCircles[i].mCenter - this.mPackingCenter;
+                    v *= damping;
+                    mCircles[i].mCenter -= v;
+                }
+            }
+        }       

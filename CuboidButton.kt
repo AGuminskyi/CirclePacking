@@ -254,26 +254,6 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
         animSetAlphaRadius.start()
     }
 
-    //  GETTER SETTER----------------------------
-
-    inner class Coord {
-        var x = 0f
-        var y = 0f
 
 
-        constructor() {}
-
-        constructor(xValue: Float, yValue: Float) {
-            this.x = xValue
-            this.y = yValue
-        }
-
-        internal fun setX(value: Float) {
-            this.x = value
-        }
-
-        internal fun setY(value: Float) {
-            this.y = value
-        }
-    }
 }
