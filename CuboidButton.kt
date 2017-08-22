@@ -34,8 +34,6 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
     private var fontStyle: String? = ""
     private var circlePaint: Paint? = null
     private var circleBorder: Paint? = null
-    private var circle_x: Int = 0
-    private var circle_y: Int = 0
     private var startcolor: Int = 0
     private var endcolor: Int = 0
     private var user_given_radius: Int = 0
@@ -44,7 +42,7 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
     private val max_Height = 80
     private var ripleEffect: Boolean = false
     private var mRadius: Float = 0f
-    private var mPaint: Paint? = null
+    private var paint: Paint? = null
     private var mRectPaint: Paint? = null
     private var mCoord: Coord? = null
     internal var mCenterX: Float = 0f
@@ -53,7 +51,7 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
 
 
     constructor(context: Context) : super(context) {
-        //init(null);
+//        init()
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -68,12 +66,12 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
         mCoord = Coord()
         circlePaint = Paint()
         circleBorder = Paint()
-        mPaint = Paint()
+        paint = Paint()
         mRectPaint = Paint()
         mRectPaint!!.isAntiAlias = true
         circlePaint!!.isAntiAlias = true
         circleBorder!!.isAntiAlias = true
-        mPaint!!.isAntiAlias = true
+        paint!!.isAntiAlias = true
         val properties = context.theme.obtainStyledAttributes(attrs, R.styleable.MyCircleView, 0, 0)
         try {
             circle_color = properties.getInt(R.styleable.MyCircleView_cub_color, Color.BLACK)
@@ -91,7 +89,7 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
             startcolor = circle_color
             default_color = circle_color
             endcolor = circle_hover_color
-            mPaint!!.color = Color.parseColor("#0DFFFFFF")
+            paint!!.color = Color.parseColor("#0DFFFFFF")
             mRectPaint!!.color = Color.parseColor("#0DFFFFFF")
             b = BitmapFactory.decodeResource(resources, cr_icon)
             cr_icon = cr_icon
@@ -102,26 +100,30 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
     }
 
     override fun onDraw(canvas: Canvas) {
+        mCoord = Coord()
+        circlePaint = Paint()
+        circleBorder = Paint()
+        paint = Paint()
+        mRectPaint = Paint()
+        var defStyleAttr: IntArray? = R.styleable.MyCircleView
+        circle_color = R.styleable.MyCircleView_cub_color
+        if (circle_color == 0) {
+            circle_color = Color.BLACK
+        }
+        default_color = circle_color
         val half_width = this.width / 2
         val half_height = this.height / 2
-        radius = Math.min(half_width, half_height) / 4
-        if (half_width > half_height) {
-            radius = half_height - 10
-        } else {
-            radius = half_width - 10
-        }
-        circle_x = half_width
-        circle_y = half_height
         circlePaint!!.style = Paint.Style.FILL
-        circlePaint!!.color = default_color
-        canvas.drawCircle(half_width.toFloat(), half_height.toFloat(), radius.toFloat(), circlePaint!!)//ORIGNAL CIRCLE
+        circlePaint!!.color = circle_color
+
+        canvas.drawCircle(mCenterX, mCenterY, radius.toFloat(), circlePaint!!)//ORIGNAL CIRCLE
         if (circle_border_radius != 0) {
             circleBorder!!.style = Paint.Style.STROKE
             circleBorder!!.strokeWidth = circle_border_radius.toFloat()
             circleBorder!!.color = circle_border_color
             this.setLayerType(View.LAYER_TYPE_HARDWARE, circleBorder)
             circleBorder!!.setShadowLayer(5.0f, 0.0f, 3.0f, Color.GRAY)
-            canvas.drawCircle(half_width.toFloat(), half_height.toFloat(), radius.toFloat(), circleBorder!!) //BORDER CIRCLE
+            canvas.drawCircle(mCenterX, mCenterY, radius.toFloat(), circleBorder!!) //BORDER CIRCLE
         }
         if (cr_icon != 0) {
             imageIcon(canvas, circlePaint!!, half_width, half_height)
@@ -132,50 +134,50 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
         gravity = Gravity.CENTER
         if (ripleEffect) {
             if (mCoord!!.x != 0f && mCoord!!.y != 0f) {
-                canvas.drawCircle(mCoord!!.x, mCoord!!.y, mRadius, mPaint!!)
+                canvas.drawCircle(mCoord!!.x, mCoord!!.y, mRadius, paint!!)
             }
         }
         super.onDraw(canvas)
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-
-        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-            if (inCircle(event.x, event.y, circle_x.toFloat(), circle_y.toFloat(), radius.toFloat())) {
-                mCenterX = (translationX + width) / 2.0f
-                mCenterY = (translationY + height) / 2.0f
-                mCoord!!.setX(event.x)
-                mCoord!!.setY(event.y)
-                if (ripleEffect == true) {
-                    rippleAnimation()
-                }
-            }
-        }
-
-        super.onTouchEvent(event)
-        val action = event.action
-        when (action) {
-            MotionEvent.ACTION_UP -> if (inCircle(event.x, event.y, circle_x.toFloat(), circle_y.toFloat(), radius.toFloat())) {
-                setColorAnimation(endcolor, startcolor)
-            } else {
-                setColorAnimation(endcolor, startcolor)
-            }
-
-            MotionEvent.ACTION_DOWN -> if (inCircle(event.x, event.y, circle_x.toFloat(), circle_y.toFloat(), radius.toFloat())) {
-                setColorAnimation(startcolor, endcolor)
-
-            }
-
-            MotionEvent.ACTION_CANCEL -> {
-                Log.e("called", "cancel else")
-                default_color = circle_color
-                setColorAnimation(endcolor, startcolor)
-            }
-        }
-        invalidate()
-        return true
-
-    }
+//    override fun onTouchEvent(event: MotionEvent): Boolean {
+//
+//        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+//            if (inCircle(event.x, event.y, circle_x.toFloat(), circle_y.toFloat(), radius.toFloat())) {
+//                mCenterX = (translationX + width) / 2.0f
+//                mCenterY = (translationY + height) / 2.0f
+//                mCoord!!.setX(event.x)
+//                mCoord!!.setY(event.y)
+//                if (ripleEffect == true) {
+//                    rippleAnimation()
+//                }
+//            }
+//        }
+//
+//        super.onTouchEvent(event)
+//        val action = event.action
+//        when (action) {
+//            MotionEvent.ACTION_UP -> if (inCircle(event.x, event.y, circle_x.toFloat(), circle_y.toFloat(), radius.toFloat())) {
+//                setColorAnimation(endcolor, startcolor)
+//            } else {
+//                setColorAnimation(endcolor, startcolor)
+//            }
+//
+//            MotionEvent.ACTION_DOWN -> if (inCircle(event.x, event.y, circle_x.toFloat(), circle_y.toFloat(), radius.toFloat())) {
+//                setColorAnimation(startcolor, endcolor)
+//
+//            }
+//
+//            MotionEvent.ACTION_CANCEL -> {
+//                Log.e("called", "cancel else")
+//                default_color = circle_color
+//                setColorAnimation(endcolor, startcolor)
+//            }
+//        }
+//        invalidate()
+//        return true
+//
+//    }
 
     private fun inCircle(x: Float, y: Float, circleCenterX: Float, circleCenterY: Float, circleRadius: Float): Boolean {
         val dx = Math.pow((x - circleCenterX).toDouble(), 2.0)
@@ -233,7 +235,7 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
         animRadius.interpolator = interpolator
         animRadius.duration = duration
 
-        val animAlpha = ObjectAnimator.ofInt(mPaint, "alpha", 200, 0)
+        val animAlpha = ObjectAnimator.ofInt(paint, "alpha", 200, 0)
         animAlpha.interpolator = interpolator
         animAlpha.duration = duration
 
@@ -253,7 +255,6 @@ class CuboidButton : android.support.v7.widget.AppCompatTextView {
         animSetAlphaRadius.playTogether(animRadius, animAlpha, animX, animY, animRectAlpha)
         animSetAlphaRadius.start()
     }
-
 
 
 }

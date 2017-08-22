@@ -1,57 +1,27 @@
 package com.idapgroup.artemhuminkiy.circlepacking
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.Bitmap
 import android.util.AttributeSet
-import android.view.View
 
-class CircleView : View {
+/**
+ * Created by artemhuminkiy on 8/22/17.
+ */
+class CircleView @JvmOverloads constructor(
+        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : android.support.v7.widget.AppCompatTextView(context, attrs, defStyleAttr) {
+    var circle_color: Int = 0
+    var circle_hover_color: Int = 0
+    private var default_color: Int = 0
+    var circle_border_color: Int = 0
+    var circle_border_radius: Int = 0
+    var cr_icon: Int = 0
+    var radius = 0f
+    var center_x = 0f
+    var center_y = 0f
+    private var bitmap : Bitmap? = null
 
-    var circleColor = DEFAULT_CIRCLE_COLOR
-        set(circleColor) {
-            field = circleColor
-            invalidate()
-        }
-    private var paint: Paint? = null
+    fun init(attrs: AttributeSet) {
 
-    constructor(context: Context) : super(context) {
-        init(context, null)
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context, attrs)
-    }
-
-    private fun init(context: Context, attrs: AttributeSet?) {
-        paint = Paint()
-        paint!!.isAntiAlias = true
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
-        val w = width
-        val h = height
-
-        val pl = paddingLeft
-        val pr = paddingRight
-        val pt = paddingTop
-        val pb = paddingBottom
-
-        val usableWidth = w - (pl + pr)
-        val usableHeight = h - (pt + pb)
-
-        val radius = Math.min(usableWidth, usableHeight) / 2
-        val cx = pl + usableWidth / 2
-        val cy = pt + usableHeight / 2
-
-        paint!!.color = this.circleColor
-        canvas.drawCircle(cx.toFloat(), cy.toFloat(), radius.toFloat(), paint!!)
-    }
-
-    companion object {
-        private val DEFAULT_CIRCLE_COLOR = Color.RED
     }
 }
