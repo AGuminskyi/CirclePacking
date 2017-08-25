@@ -47,12 +47,15 @@ class CirclePackingLayout @JvmOverloads constructor(
     fun createCircles() {
         val radius = widthLayout / 10f
         coordinates.forEach {
-//            val layoutParam : LayoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-//            layoutParams.setMargins(5, 10, 5, 5)
+            val layoutParam : LayoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
             val circleView = CircleView(context).apply { setCoordinates(it, radius)}
-//            layoutParam.height = 60
-//            layoutParam.width = 60
-//            circleView.layoutParams = layoutParam
+            layoutParam.height = (radius * 1.15f * 2 + it.x *2).toInt()
+            layoutParam.width = ((radius * 1.15f * 2 + it.y * 2).toInt())
+//            circleView.setPadding((radius/2).toInt(),(radius/4).toInt(), 0,0)
+            circleView.setPadding(0, (radius/4).toInt(),0,0)
+            circleView.setCompoundDrawablesWithIntrinsicBounds(0, R.mipmap.ic_launcher, 0, 0)
+            circleView.paddingBottom
+            circleView.layoutParams = layoutParam
             addView(circleView)
             //addView(CircleView(context).apply { setCoordinates(it, radius)})
         }

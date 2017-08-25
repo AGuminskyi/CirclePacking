@@ -5,8 +5,6 @@ import android.graphics.*
 import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.ViewGroup
-import android.widget.RelativeLayout
 import android.widget.TextView
 import java.util.*
 
@@ -42,11 +40,12 @@ class CircleView @JvmOverloads constructor(
         if (icon != 0) {
             bitmap = BitmapFactory.decodeResource(resources, icon)
             imageIcon(canvas, circlePaint!!)
-            setText("")
+            setText(text)
         }
         else{
             setText(text)
         }
+        gravity = Gravity.CENTER_HORIZONTAL
 
         super.onDraw(canvas)
     }
@@ -79,13 +78,11 @@ class CircleView @JvmOverloads constructor(
 }
  fun CircleView.setCoordinates(coord: Coordinate, radius : Float){
      this.radius = radius * MAX_RADIUS
-     center_x = coord.x * radius
-     center_y = coord.y * radius
-     this.x = center_x - radius/2
-     this.y = center_y - radius/2
-//     this.height = 10
-//     this.width = 10
-//     this.setBackgroundColor(com.idapgroup.artemhuminkiy.circlepacking.color())
+     this.x = coord.x * radius - this.radius
+     this.y = coord.y * radius - this.radius
+     center_x = radius * MAX_RADIUS + coord.x
+     center_y = radius * MAX_RADIUS + coord.y
+     this.setBackgroundColor(com.idapgroup.artemhuminkiy.circlepacking.color())
      circle_color = color()
      text = "BONK"
 
