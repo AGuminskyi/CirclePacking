@@ -12,10 +12,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         circlePackingLayout.showCircles()
-//        circle.text = "Hello"
-//        circle.center_x = 120F
-//        circle.center_y = 340F
-//        circle.radius = 50F
     }
 
 }

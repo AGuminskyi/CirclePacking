@@ -1,16 +1,19 @@
 package com.idapgroup.artemhuminkiy.circlepacking
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
+import android.os.Build
 import android.util.AttributeSet
+import android.view.Gravity
+import android.view.ViewGroup
+import android.widget.RelativeLayout
+import android.widget.TextView
 import java.util.*
 
 class CircleView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : android.support.v7.widget.AppCompatTextView(context, attrs, defStyleAttr) {
+
+) : TextView(context, attrs, defStyleAttr) {
     var circle_color: Int = 0
     var icon: Int = 0
     var radius = 0f
@@ -19,6 +22,7 @@ class CircleView @JvmOverloads constructor(
     var text : String? = null
     private var bitmap: Bitmap? = null
     private var circlePaint: Paint? = null
+    val MAX_RADIUS = 1.15f
     private var max_Width = 80
     private var max_Height = 80
 
@@ -33,10 +37,15 @@ class CircleView @JvmOverloads constructor(
         circlePaint = Paint()
         circlePaint!!.style
         circlePaint!!.color = circle_color
+        includeFontPadding = false
         canvas.drawCircle(center_x, center_y, radius, circlePaint)
         if (icon != 0) {
+            bitmap = BitmapFactory.decodeResource(resources, icon)
             imageIcon(canvas, circlePaint!!)
-            text = ""
+            setText("")
+        }
+        else{
+            setText(text)
         }
 
         super.onDraw(canvas)
@@ -69,12 +78,19 @@ class CircleView @JvmOverloads constructor(
     }
 }
  fun CircleView.setCoordinates(coord: Coordinate, radius : Float){
-     this.radius = radius * 1.15f
+     this.radius = radius * MAX_RADIUS
      center_x = coord.x * radius
      center_y = coord.y * radius
+     this.x = center_x - radius/2
+     this.y = center_y - radius/2
+//     this.height = 10
+//     this.width = 10
+//     this.setBackgroundColor(com.idapgroup.artemhuminkiy.circlepacking.color())
      circle_color = color()
-     text = "HI"
-     setText(text)
+     text = "BONK"
+
+//     icon = R.mipmap.ic_launcher
+
 
  }
 

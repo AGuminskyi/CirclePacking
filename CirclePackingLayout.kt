@@ -7,6 +7,9 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
+import android.view.Gravity
+import android.widget.RelativeLayout
+
 
 class CirclePackingLayout @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -44,7 +47,14 @@ class CirclePackingLayout @JvmOverloads constructor(
     fun createCircles() {
         val radius = widthLayout / 10f
         coordinates.forEach {
-            addView(CircleView(context).apply { setCoordinates(it, radius) })
+//            val layoutParam : LayoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+//            layoutParams.setMargins(5, 10, 5, 5)
+            val circleView = CircleView(context).apply { setCoordinates(it, radius)}
+//            layoutParam.height = 60
+//            layoutParam.width = 60
+//            circleView.layoutParams = layoutParam
+            addView(circleView)
+            //addView(CircleView(context).apply { setCoordinates(it, radius)})
         }
     }
 
