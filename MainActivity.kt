@@ -12,12 +12,8 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-
-//        circlePackingLayout.showCircles()
-        val circle = CircleView(this)
-        circle.createCircles()
-        circle.setOnClickListener { Toast.makeText(this, "1", Toast.LENGTH_SHORT).show() }
-        container.addView(circle)
+        circlePackingLayout.showCircles()
+//        circlePackingLayout.setOnTouchListener { view, motionEvent -> Toast.makeText(this, view.x.toString() + " " + view.y, Toast.LENGTH_SHORT).show() }
     }
 
 }
