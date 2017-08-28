@@ -39,8 +39,6 @@ class CircleView @JvmOverloads constructor(
         circlePaint!!.style
         circlePaint!!.color = circle_color
         includeFontPadding = false
-//        bitmap = BitmapFactory.decodeResource(resources, icon)
-//        image.setImageBitmap(bitmap)
         canvas.drawCircle(center_x, center_y, radius, circlePaint)
         if (icon != 0) {
             bitmap = BitmapFactory.decodeResource(resources, icon)
@@ -54,7 +52,6 @@ class CircleView @JvmOverloads constructor(
     private fun imageIcon(canvas: Canvas, circlePaint: Paint, p1: Int, p2: Int) {
         val b2 = scaleBitmap(bitmap as Bitmap)
         canvas.drawBitmap(b2, p1 - b2.width * 0.5f, p2 - b2.height * 0.5f, null)
-//        canvas.drawBitmap(b2, width * 0.5f, height * 0.5f, null)
     }
 
     private fun scaleBitmap(bitmap: Bitmap): Bitmap {
