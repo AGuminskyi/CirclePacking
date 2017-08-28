@@ -5,7 +5,6 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import java.util.*
