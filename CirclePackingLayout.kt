@@ -7,8 +7,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
-import android.view.Gravity
-import android.widget.RelativeLayout
+import android.view.MotionEvent
+import android.widget.Toast
 
 
 class CirclePackingLayout @JvmOverloads constructor(
@@ -16,19 +16,20 @@ class CirclePackingLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private var widthLayout: Int = 0
-    private var coordinates: List<Coordinate> =  listOf(Coordinate(1.8f, 1.7f), //1
-                                                        Coordinate(4.2f, 1.2f), //2
-                                                        Coordinate(6.5f, 2.2f), //3
-                                                        Coordinate(8.8f, 3.0f), //4
-                                                        Coordinate(1.6f, 4.0f), //5
-                                                        Coordinate(4.3f, 4.0f), //6
-                                                        Coordinate(7.0f, 4.6f), //7
-                                                        Coordinate(1.2f, 6.4f), //8
-                                                        Coordinate(3.5f, 7.0f), //9
-                                                        Coordinate(6.0f, 6.9f), //10
-                                                        Coordinate(8.6f, 7.4f), //11
-                                                        Coordinate(2.0f, 9.0f), //12
-                                                        Coordinate(5.0f, 9.0f)) //13
+    private var coordinates: List<Coordinate> = listOf(
+            Coordinate(1.8f, 1.7f), //1
+            Coordinate(4.2f, 1.2f), //2
+            Coordinate(6.5f, 2.2f), //3
+            Coordinate(8.8f, 3.0f), //4
+            Coordinate(1.6f, 4.0f), //5
+            Coordinate(4.3f, 4.0f), //6
+            Coordinate(7.0f, 4.6f), //7
+            Coordinate(1.2f, 6.4f), //8
+            Coordinate(3.5f, 7.0f), //9
+            Coordinate(6.0f, 6.9f), //10
+            Coordinate(8.6f, 7.4f), //11
+            Coordinate(2.0f, 9.0f), //12
+            Coordinate(5.0f, 9.0f)) //13
 
     fun showCircles() {
         onLaidOut {
@@ -41,26 +42,38 @@ class CirclePackingLayout @JvmOverloads constructor(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         widthLayout = minOf(measuredHeight, measuredWidth)
-
     }
 
     fun createCircles() {
         val radius = widthLayout / 10f
         coordinates.forEach {
-            val layoutParam : LayoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-            val circleView = CircleView(context).apply { setCoordinates(it, radius)}
-            layoutParam.height = (radius * 1.15f * 2 + it.x *2).toInt()
-            layoutParam.width = ((radius * 1.15f * 2 + it.y * 2).toInt())
-//            circleView.setPadding((radius/2).toInt(),(radius/4).toInt(), 0,0)
-            circleView.setPadding(0, (radius/4).toInt(),0,0)
-            circleView.setCompoundDrawablesWithIntrinsicBounds(0, R.mipmap.ic_launcher, 0, 0)
-            circleView.paddingBottom
+            val layoutParam: LayoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+
+            val circleView = CircleView(context).apply { setCoordinates(it, radius) }
+
+            layoutParam.height = (radius * 1.15f * 2).toInt() + 2
+            layoutParam.width = (radius * 1.15f * 2).toInt() + 2
+
+            circleView.setPadding(0, (radius + radius * 0.5).toInt(), 0, 0)
+
+//            circleView.setPadding(0, (radius/4).toInt(), 0, 0)
+//            circleView.setCompoundDrawablesWithIntrinsicBounds(0, R.mipmap.ic_launcher, 0, 0)
+            circleView.icon = R.mipmap.ic_launcher
+
             circleView.layoutParams = layoutParam
+
             addView(circleView)
             //addView(CircleView(context).apply { setCoordinates(it, radius)})
         }
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            Toast.makeText(context, "not in circle", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return super.onTouchEvent(event)
+    }
 
     fun View.onLaidOut(action: () -> Unit) {
         viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
