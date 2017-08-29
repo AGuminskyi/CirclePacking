@@ -14,11 +14,9 @@ class CirclePackingLayout @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    var exampleIcon = R.mipmap.ic_launcher
     private var MAX_RADIUS = 1.15f
     private var CONSTANT_SCALE = 10f
     private lateinit var imageView: ImageView
-    private lateinit var text: TextView
     private var widthLayout: Int = 0
     private var coordinates: List<Coordinate> = listOf(
             Coordinate(1.8f, 1.7f), //1
@@ -35,11 +33,11 @@ class CirclePackingLayout @JvmOverloads constructor(
             Coordinate(2.0f, 9.0f), //12
             Coordinate(5.0f, 9.0f)) //13
 
-    fun showCircles(categoryList: List<CircleView>) {
-//        if (categoryList.size != coordinates.size)
-//            return
+    fun showCircles(categoryList: MutableList<CircleView>) {
+        if (categoryList.size != coordinates.size)
+            return
         onLaidOut {
-            createCircles()
+            createCircles(categoryList)
             invalidate()
         }
     }
@@ -49,32 +47,22 @@ class CirclePackingLayout @JvmOverloads constructor(
         widthLayout = minOf(measuredHeight, measuredWidth)
     }
 
-    fun createCircles() {
+    fun createCircles(categoryList: MutableList<CircleView>) {
         val radius = widthLayout / CONSTANT_SCALE
-        coordinates.forEach {
-
-            icon(exampleIcon)
-            categoryName("Bonk")
-
-            val circleView = CircleView(context).apply { setCoordinates(it, radius) }
-            circleView.layoutParams = setLayoutParams(radius)
-            circleView.setPadding(0, (radius / 4 + radius / 6).toInt(), 0, 0)
-            circleView.addView(imageView)
-            circleView.addView(text)
-            addView(circleView)
+        coordinates.forEachIndexed { index, coordinate ->
+            val url = categoryList[index].icon
+            val imageView = createImageView(url)
+            val categoryName = categoryList[index].categoryName
+            categoryList[index] = CircleView(context).apply { setCoordinates(coordinate, radius) }
+            categoryList[index].layoutParams = setLayoutParams(radius)
+            categoryList[index].setPadding(0, (radius / 4 + radius / 6).toInt(), 0, 0)
+            categoryList[index].addView(imageView)
+            categoryList[index].addView(createTextView(imageView, categoryName))
+            addView(categoryList[index])
         }
     }
 
-    fun icon(icon: Int) {
-        exampleIcon = icon
-        imageView = createImageView(icon)
-    }
-
-    fun categoryName(categoryName: String) {
-        text = createTextView(imageView, categoryName)
-    }
-
-    private fun setLayoutParams(radius: Float) : LayoutParams {
+    private fun setLayoutParams(radius: Float): LayoutParams {
         val layoutParam = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         layoutParam.height = (radius * MAX_RADIUS * 2).toInt() + 2
         layoutParam.width = (radius * MAX_RADIUS * 2).toInt() + 2
@@ -85,25 +73,23 @@ class CirclePackingLayout @JvmOverloads constructor(
         val relativeParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         relativeParams.addRule(RelativeLayout.BELOW, imageView.id)
         relativeParams.addRule(RelativeLayout.CENTER_IN_PARENT)
-        text = TextView(context)
+        val text = TextView(context)
         text.text = categoryName
         text.layoutParams = relativeParams
-
         return text
     }
 
-    private fun createImageView(icon: Int): ImageView {
+    private fun createImageView(url: String): ImageView {
         val relativeParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         relativeParams.addRule(RelativeLayout.CENTER_HORIZONTAL)
-
-        val imageView = ImageView(context)
-//        Glide
-//                .with(context)
-//                .load("")
-//                .into(imageView)
-        val bitmap = BitmapFactory.decodeResource(resources, icon)
         val radius = widthLayout / CONSTANT_SCALE
-        imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, (radius + radius / 4).toInt(), (radius + radius / 4).toInt(), false))
+        val imageView = ImageView(context)
+        Glide
+                .with(context)
+                .load(url)
+                .override(((radius + radius / 4).toInt()), ((radius + radius / 4).toInt()))
+                .fitCenter()
+                .into(imageView)
         imageView.id = 1
         imageView.layoutParams = relativeParams
 
@@ -112,8 +98,6 @@ class CirclePackingLayout @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.action == MotionEvent.ACTION_DOWN) {
-
-            //make your realization here
             Toast.makeText(context, "not in circle", Toast.LENGTH_SHORT).show()
             return false
         }
