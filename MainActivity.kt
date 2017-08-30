@@ -64,6 +64,6 @@ class MainActivity : AppCompatActivity() {
 //        val list : MutableList<CircleView> = mutableListOf(circleView1,circleView2,circleView3,
 //                circleView4,circleView5,circleView6,circleView7,circleView8,circleView9,circleView10,
 //                circleView11,circleView12,circleView13)
-        circlePackingLayout.showCircles(list)
+//        circlePackingLayout.showCircles(list)
     }
 }
